@@ -1,0 +1,15 @@
+{
+  "name": "wheel-picker",
+  "version": "0.0.1",
+  "description": "Simple wheel-picker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wheel",
+    "picker"
+  ],
+  "author": "Rumaxoft",
+  "license": "MIT"
+}
