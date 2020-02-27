@@ -11,5 +11,34 @@
     "picker"
   ],
   "author": "Rumaxoft",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "autoprefixer": "^9.7.4",
+    "babel-loader": "^8.0.6",
+    "browser-sync": "^2.26.7",
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
+    "gulp-changed": "^4.0.2",
+    "gulp-cssnano": "^2.1.3",
+    "gulp-debug": "^4.0.0",
+    "gulp-if": "^3.0.0",
+    "gulp-notify": "^3.2.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^8.0.0",
+    "gulp-pug": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-stylus": "^2.7.0",
+    "gulp-uglify": "^3.0.2",
+    "gulplog": "^1.0.0",
+    "path": "^0.12.7",
+    "perfectionist": "^2.4.0",
+    "stylefmt": "^6.0.3",
+    "stylus": "^0.54.7",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^4.41.6",
+    "webpack-stream": "^5.2.1"
+  }
 }
