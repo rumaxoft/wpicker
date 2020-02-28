@@ -1,5 +1,5 @@
 $sideSize= 40px;
-$time= 5s;
+$time= 20s;
 $radius = $sideSize / (2*tan(180/20deg))
 $elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12), 0px 0px 2px rgba(0, 0, 0, 0.14);
 
@@ -21,9 +21,10 @@ $elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12)
 .wpicker
   margin 0
   padding 0
-  display: flex
-  justify-content: center
-  align-items: center
+  position absolute
+  top 50%
+  left 50%
+  transform translateY(-50%) translateX(-50%)
   width: 300px
   height: 300px
   box-shadow: $elevation-1dp
@@ -31,6 +32,10 @@ $elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12)
   perspective-origin: 50% 50%;
   perspective: 1000px
   overflow hidden
+  display flex
+  justify-content: center
+  align-items: center
+
   &:before, &:after
     position: absolute;
     z-index: 1;
@@ -46,7 +51,6 @@ $elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12)
   &:after
     bottom: 0;
     background-image: linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
-
 
   &__viewport
     position absolute
@@ -65,9 +69,20 @@ $elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12)
     height $sideSize
     list-style none
     position relative
+    width 100%
+    display block
+    will-change: transform
     transform-style: preserve-3d
-    transform: translateZ(-$radius) rotateX(0deg);
-    // transform: rotateY(90deg)
+    transform: translateZ(-$radius) rotate(0deg)
+
+    animation-name: rotate
+    animation-timing-function: linear
+    animation-iteration-count: infinite
+    animation-duration: $time
+
+    &--flex
+      position relative
+      top auto
 
   &__item
     margin 0
@@ -75,22 +90,26 @@ $elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12)
     display flex
     justify-content: center
     align-items: center
-    width $sideSize
+    width 100%
     height $sideSize
+    // will-change: transform
     backface-visibility: hidden
     color grey
-    // background pink
     position absolute
     font-weight: 600
-
-    // &:nth-child(20)
-    //   background red
 
     for num in (1..20)
       &:nth-child({num})
         transform: rotateX((-18deg * num) + 18deg) translateZ($radius)
 
-    &:nth-child(1) .wpicker__item-content
-      transform scale(1.2);
+  &__item-content
+    transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1)
+    &--scaled
+      transform scale(1.2)
+      color #222
 
-
+@keyframes rotate
+  from
+    transform rotateX(0deg)
+  to
+    transform rotateX(360deg)
