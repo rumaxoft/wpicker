@@ -1,4 +1,115 @@
-h1
-  font-size: 70px
+$sideSize= 40px;
+$time= 20s;
+$radius = $sideSize / (2*tan(180/20deg))
+$elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12), 0px 0px 2px rgba(0, 0, 0, 0.14);
 
 
+.page
+  margin 0
+  padding 0
+  display flex
+  flex-direction column
+  align-items: center
+  width 100vw
+  height 100vh
+  font-family: Roboto
+
+.title
+  margin-bottom 100px
+  margin-top 100px
+
+.wpicker
+  margin 0
+  padding 0
+  position absolute
+  top 50%
+  left 50%
+  transform translateY(-50%) translateX(-50%)
+  width: 300px
+  height: 300px
+  box-shadow: $elevation-1dp
+  font-size 24px
+  perspective-origin: 50% 50%;
+  perspective: 1000px
+  overflow hidden
+  display flex
+  justify-content: center
+  align-items: center
+
+  &:before, &:after
+    position: absolute;
+    z-index: 1;
+    display: block;
+    content: '';
+    width: 100%;
+    height: 50%;
+
+  &:before
+    top: 0;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+
+  &:after
+    bottom: 0;
+    background-image: linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+
+  &__viewport
+    position absolute
+    width $sideSize * 3
+    height $sideSize * 1.1
+    top 50%
+    left 50%
+    transform translateY(-50%) translateX(-50%)
+    border-top 2px solid rgba(1, 1, 1, 0.3)
+    border-bottom 2px solid rgba(1, 1, 1, 0.3)
+
+  &__list
+    margin 0
+    padding 0
+    width $sideSize
+    height $sideSize
+    list-style none
+    position relative
+    width 100%
+    display block
+    will-change: transform
+    transform-style: preserve-3d
+    transform: translateZ(-$radius) rotate(0deg)
+
+    animation-name: rotate
+    animation-timing-function: linear
+    animation-iteration-count: infinite
+    animation-duration: $time
+
+    &--flex
+      position relative
+      top auto
+
+  &__item
+    margin 0
+    padding 0
+    display flex
+    justify-content: center
+    align-items: center
+    width 100%
+    height $sideSize
+    // will-change: transform
+    backface-visibility: hidden
+    color grey
+    position absolute
+    font-weight: 600
+
+    for num in (1..20)
+      &:nth-child({num})
+        transform: rotateX((-18deg * num) + 18deg) translateZ($radius)
+
+  &__item-content
+    transition: all 0.2s cubic-bezier(0.215, 0.61, 0.355, 1)
+    &--scaled
+      transform scale(1.2)
+      color #222
+
+@keyframes rotate
+  from
+    transform rotateX(0deg)
+  to
+    transform rotateX(360deg)
