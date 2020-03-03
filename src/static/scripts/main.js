@@ -15,6 +15,8 @@ class WheelPicker {
     this.radius = this.itemHeight / Math.tan(this.itemAngle * Math.PI / 180)
     this. currentScroll= 0 //unit is itemHeight
 
+    this.quarterQty = this.qty / 4;
+
     this.events = {
       touchstart: null,
       touchmove: null,
@@ -68,10 +70,11 @@ class WheelPicker {
     `
     let list = '';
     for (let i = 0; i < source.length; i++) {
-      list+= `<li class="wpicker__item"
+      list+= `<li class= "wpicker__item"
                 style="
                 height: ${this.itemHeight}px;
-                transform: rotateX(${-this.itemAngle * i}deg) translate3d(0, 0, ${this.radius}px);">
+                transform: rotateX(${-this.itemAngle * i}deg) translate3d(0, 0, ${this.radius}px);"
+                data-index= "${i}">
                 <div class="wpicker__item-content">${source[i]}<div>
               </li>`
     }
@@ -79,6 +82,7 @@ class WheelPicker {
     this.elem.innerHTML = template.replace('{{list}}', list)
 
     this.list = elem.querySelector('.wpicker__list')
+    this.items = elem.querySelectorAll('.wpicker__item')
   }
 
   _touchstart(e, touchData) {
@@ -93,19 +97,23 @@ class WheelPicker {
 
     let eventY = e.touches[0].clientY;
 
-    let scrollAdd = (touchData.startY - eventY) / this.itemHeight;
+    let scrollAdd = (touchData.startY - eventY) / this.itemHeight
     let moveToScroll = scrollAdd + this.currentScroll;
 
-    touchData.touchScroll = this._moveWheel(moveToScroll);
+    moveToScroll = this._preventOverscrolling(moveToScroll)
+
+
+    touchData.touchScroll = this._moveWheel(moveToScroll)
   }
 
   _touchend(e, touchData) {
-    this.elem.removeEventListener('touchmove', this._touchmove);
+    this.elem.removeEventListener('touchmove', this._touchmove)
     this.currentScroll = touchData.touchScroll
   }
 
   _wheel(e, touchData) {
     let moveToScroll = this.currentScroll + e.deltaY/this.itemHeight
+    moveToScroll = this._preventOverscrolling(moveToScroll)
     this.currentScroll = this._moveWheel(moveToScroll)
   }
 
@@ -113,7 +121,27 @@ class WheelPicker {
 
     this.list.style.transform = `translate3d(0, 0, ${-this.radius}px) rotateX(${this.itemAngle * scroll}deg)`;
 
+    [...this.items].forEach(itemElem => {
+      if (Math.abs(itemElem.dataset.index - scroll) > this.quarterQty) {
+        itemElem.style.visibility = 'hidden';
+      } else {
+        itemElem.style.visibility = 'visible';
+      }
+    })
+
     return scroll;
+  }
+
+  _preventOverscrolling(moveToScroll) {
+
+    if (moveToScroll < 0) {
+      moveToScroll *= 0.3;
+    } else if (moveToScroll > this.source.length) {
+      moveToScroll = this.source.length + (moveToScroll - this.source.length) * 0.3;
+    }
+    console.log(moveToScroll)
+
+    return moveToScroll
   }
 
 
@@ -130,10 +158,10 @@ function getNumbers(from, to) {
   return list
 }
 
-let source = getNumbers(1, 20)
+let source = getNumbers(1, 40)
 let elem = document.querySelector('.wpicker')
 
-let wheelPicker = new WheelPicker(elem, source.length, source)
+let wheelPicker = new WheelPicker(elem, 20, source)
 
 wheelPicker.init()
 
