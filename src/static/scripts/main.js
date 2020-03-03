@@ -17,6 +17,7 @@ class WheelPicker {
     this.options.qty =  this.options.qty - this.options.qty % 4
     Object.assign(this, this.options);
 
+    this.halfQty = this.qty / 2;
     this.quarterQty = this.qty / 4;
 
     this.elems = {
@@ -82,15 +83,52 @@ class WheelPicker {
           {{list}}
       </ul>
     `
+    if (this.options.type === 'infinite') {
+      let concatSource = [].concat(source)
+      while (concatSource.length < this.halfQty) {
+        concatSource = concatSource.concat(source)
+      }
+      source = concatSource;
+    }
+
+    this.source = source;
+    let sourceLength = source.length;
+
     let list = '';
     for (let i = 0; i < source.length; i++) {
-      list+= `<li class= "wpicker__item"
-                style="
-                height: ${this.itemHeight}px;
-                transform: rotateX(${-this.itemAngle * i}deg) translate3d(0, 0, ${this.radius}px);"
-                data-index= "${i}">
-                <div class="wpicker__item-content">${source[i]}<div>
-              </li>`
+      list +=   `<li class= "wpicker__item"
+                  style="
+                  height: ${this.itemHeight}px;
+                  transform: rotateX(${-this.itemAngle * i}deg) translate3d(0, 0, ${this.radius}px);"
+                  data-index= "${i}">
+                    <div class="wpicker__item-content">${source[i].text}<div>
+                </li>`
+    }
+
+    if (this.options.type === 'infinite') {
+
+      for (let i = 0; i < this.quarterQty; i++) {
+
+        list = `<li class="wpicker__item"
+                  style="
+                  height: ${this.itemHeight}px;
+                  transform: rotateX(${this.itemAngle * (i + 1)}deg) translate3d(0, 0, ${this.radius}px);"
+                  data-index="${-i - 1}">
+                    <div class="wpicker__item-content">
+                      ${source[sourceLength - i - 1].text}
+                    <div>
+                </li>` + list;
+
+        list += `<li class="wpicker__item"
+                  style="
+                  height: ${this.itemHeight}px;
+                  transform: rotateX(${-this.itemAngle * (i + sourceLength)}deg) translate3d(0, 0, ${this.radius}px);"
+                  data-index="${i + sourceLength}">
+                    <div class="wpicker__item-content">
+                      ${source[i].text}
+                    <div>
+                </li>`
+      }
     }
 
     this.elems.elem.innerHTML = template.replace('{{list}}', list)
@@ -114,8 +152,12 @@ class WheelPicker {
     let scrollAdd = (touchData.startY - eventY) / this.itemHeight
     let moveToScroll = scrollAdd + this.currentScroll;
 
-    moveToScroll = this._preventOverscrolling(moveToScroll)
+    if (this.type === 'normal') {
+      moveToScroll = this._preventOverscrolling(moveToScroll)
 
+    } else {
+      moveToScroll = this._normalizeScroll(moveToScroll)
+    }
 
     touchData.touchScroll = this._moveWheel(moveToScroll)
   }
@@ -127,7 +169,12 @@ class WheelPicker {
 
   _wheel(e, touchData) {
     let moveToScroll = this.currentScroll + e.deltaY/this.itemHeight
-    moveToScroll = this._preventOverscrolling(moveToScroll)
+    if (this.type === 'normal') {
+      moveToScroll = this._preventOverscrolling(moveToScroll)
+
+    } else {
+      moveToScroll = this._normalizeScroll(moveToScroll)
+    }
     this.currentScroll = this._moveWheel(moveToScroll)
   }
 
@@ -157,6 +204,16 @@ class WheelPicker {
     return moveToScroll
   }
 
+  _normalizeScroll(scroll) {
+    let normalizedScroll = scroll;
+
+    while(normalizedScroll < 0) {
+      normalizedScroll += this.source.length;
+    }
+    normalizedScroll = normalizedScroll % this.source.length;
+    return normalizedScroll;
+  }
+
 
 }
 
@@ -166,7 +223,7 @@ class WheelPicker {
 function getNumbers(from, to) {
   let list = []
   for(let i = from; i <= to; i++) {
-    list.push(i)
+    list.push({value: i, text: i})
   }
   return list
 }
@@ -177,6 +234,7 @@ let elem = '.wpicker'
 let wheelPicker = new WheelPicker({
   elem: '.wpicker',
   qty: 21,
+  type: 'infinite',
   source: source
 })
 
