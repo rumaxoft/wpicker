@@ -4,18 +4,26 @@ import 'core-js';
 
 class WheelPicker {
 
-  constructor(elem, qty, source){
+  constructor(options){
 
-    this.elem = elem
-    this.qty = qty
-    this.source = source
-
-    this.itemHeight = Math.floor(this.elem.clientHeight * Math.PI / this.qty)
-    this.itemAngle = 360 / this.qty
-    this.radius = this.itemHeight / Math.tan(this.itemAngle * Math.PI / 180)
-    this. currentScroll= 0 //unit is itemHeight
+    let defaults = {
+      elem: '',
+      type: 'infinite', // infinite, normal
+      qty: 20,
+      source: [], // {value: xx, text: xx},
+      value: null
+    }
+    this.options = Object.assign({}, defaults, options)
+    this.options.qty =  this.options.qty - this.options.qty % 4
+    Object.assign(this, this.options);
 
     this.quarterQty = this.qty / 4;
+
+    this.elems = {
+      elem: document.querySelector(this.options.elem),
+      list: null,
+      items: null
+    }
 
     this.events = {
       touchstart: null,
@@ -23,11 +31,17 @@ class WheelPicker {
       touchend: null,
       wheel: null
     }
+    this.itemHeight = Math.floor(this.elems.elem.clientHeight * Math.PI / this.options.qty)
+    this.itemAngle = 360 / this.options.qty
+    this.radius = this.itemHeight / Math.tan(this.itemAngle * Math.PI / 180)
+    this. currentScroll = 0 //unit is itemHeight
+
+
   }
 
   init() {
 
-    this._create(this.source)
+    this._create(this.options.source)
 
     let touchData = {
       startY: 0,
@@ -37,7 +51,7 @@ class WheelPicker {
     for (let eventName in this.events) {
       this.events[eventName] = ((eventName) => {
         return (e) => {
-          if (this.elem.contains(e.target) || e.target === this.elem) {
+          if (this.elems.elem.contains(e.target) || e.target === this.elems.elem) {
             e.preventDefault();
             if (this.source.length) {
               this['_' + eventName](e, touchData);
@@ -47,9 +61,9 @@ class WheelPicker {
       })(eventName);
     }
 
-    this.elem.addEventListener('touchstart', this.events.touchstart);
-    this.elem.addEventListener('touchend', this.events.touchend);
-    this.elem.addEventListener('wheel', this.events.wheel);
+    this.elems.elem.addEventListener('touchstart', this.events.touchstart);
+    this.elems.elem.addEventListener('touchend', this.events.touchend);
+    this.elems.elem.addEventListener('wheel', this.events.wheel);
   }
 
   _create(source) {
@@ -79,15 +93,15 @@ class WheelPicker {
               </li>`
     }
 
-    this.elem.innerHTML = template.replace('{{list}}', list)
+    this.elems.elem.innerHTML = template.replace('{{list}}', list)
 
-    this.list = elem.querySelector('.wpicker__list')
-    this.items = elem.querySelectorAll('.wpicker__item')
+    this.elems.list = this.elems.elem.querySelector('.wpicker__list')
+    this.elems.items = this.elems.elem.querySelectorAll('.wpicker__item')
   }
 
   _touchstart(e, touchData) {
 
-    this.elem.addEventListener('touchmove', this.events.touchmove);
+    this.elems.elem.addEventListener('touchmove', this.events.touchmove);
     let eventY = e.touches[0].clientY;
     touchData.startY = eventY;
     touchData.touchScroll = this.currentScroll;
@@ -107,7 +121,7 @@ class WheelPicker {
   }
 
   _touchend(e, touchData) {
-    this.elem.removeEventListener('touchmove', this._touchmove)
+    this.elems.elem.removeEventListener('touchmove', this._touchmove)
     this.currentScroll = touchData.touchScroll
   }
 
@@ -119,9 +133,9 @@ class WheelPicker {
 
   _moveWheel(scroll) {
 
-    this.list.style.transform = `translate3d(0, 0, ${-this.radius}px) rotateX(${this.itemAngle * scroll}deg)`;
+    this.elems.list.style.transform = `translate3d(0, 0, ${-this.radius}px) rotateX(${this.itemAngle * scroll}deg)`;
 
-    [...this.items].forEach(itemElem => {
+    [...this.elems.items].forEach(itemElem => {
       if (Math.abs(itemElem.dataset.index - scroll) > this.quarterQty) {
         itemElem.style.visibility = 'hidden';
       } else {
@@ -139,7 +153,6 @@ class WheelPicker {
     } else if (moveToScroll > this.source.length) {
       moveToScroll = this.source.length + (moveToScroll - this.source.length) * 0.3;
     }
-    console.log(moveToScroll)
 
     return moveToScroll
   }
@@ -159,9 +172,15 @@ function getNumbers(from, to) {
 }
 
 let source = getNumbers(1, 40)
-let elem = document.querySelector('.wpicker')
+let elem = '.wpicker'
 
-let wheelPicker = new WheelPicker(elem, 20, source)
+let wheelPicker = new WheelPicker({
+  elem: '.wpicker',
+  qty: 21,
+  source: source
+})
 
 wheelPicker.init()
+
+console.dir(wheelPicker)
 
