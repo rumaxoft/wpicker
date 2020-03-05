@@ -13,11 +13,11 @@ class WheelPicker {
   constructor(options){
 
     let defaults = {
-      elem: '',
-      type: 'infinite', // infinite, normal
-      qty: 20,
+      elem: '', //css selector
+      type: 'infinite', // infinite scroll, normal non-infinite
+      qty: 20, //wheel size, the number of items in the wheel, must be set to a multiple of 4
       sensitivity: 0.8,
-      source: [], // {value: xx, text: xx},
+      source: [], // list of items {value: xx, text: xx},
       value: null,
       onChange: null
     }
@@ -28,12 +28,12 @@ class WheelPicker {
 
     this.halfQty = this.qty / 2;
     this.quarterQty = this.qty / 4;
-    this.a = this.options.sensitivity * 10
-    this.minV = Math.sqrt(1 / this.a)
+    this.a = this.options.sensitivity * 10 // scroll deceleration
+    this.minV = Math.sqrt(1 / this.a) // minimun initial speed
     this.selected = this.source[0]
 
-    this.exceedA = 10
-    this.moveT = 0
+    this.exceedA = 10 // deceleration beyond
+    this.moveT = 0 //scroll tick
     this.moving = false;
 
     this.elems = {
@@ -49,13 +49,12 @@ class WheelPicker {
       wheel: null
     }
     this.isFirefox = typeof InstallTrigger !== 'undefined';
-    this.wheelMultiplicator = this.isFirefox ? 5 : 0.7
-    console.log(this.firefoxMultiplicator)
-    this.itemHeight = Math.floor(this.elems.elem.clientHeight * Math.PI / this.options.qty)
-    this.itemAngle = 360 / this.options.qty
-    this.radius = this.itemHeight / Math.tan(this.itemAngle * Math.PI / 180)
+    this.wheelMultiplicator = this.isFirefox ? 5 : 0.7  // firefox has another deltaY on wheel event
+    this.itemHeight = Math.floor(this.elems.elem.clientHeight * Math.PI / this.options.qty) // calculating height from circumference
+    this.itemAngle = 360 / this.options.qty //degree of rotation between each item
+    this.radius = this.itemHeight / Math.tan(this.itemAngle * Math.PI / 180) //wheel radius
     this. currentScroll = 0 //unit is itemHeight
-    this.wheelCallback = null;
+    this.wheelCallback = null; // "wheel" event hasn't "wheel end" event
 
 
   }
@@ -86,10 +85,10 @@ class WheelPicker {
     this.elems.elem.addEventListener('touchend', this.events.touchend);
     document.addEventListener('mouseup', this.events.touchend);
     this.elems.elem.addEventListener('wheel', this.events.wheel);
-    if (this.source.length) {
-      this.value = this.value !== null ? this.value : this.source[0].value;
-      this.select(this.value);
-    }
+    // if (this.source.length) {
+    //   this.value = this.value !== null ? this.value : this.source[0].value;
+    //   this.select(this.value);
+    // }
   }
 
   _create(source) {
@@ -132,8 +131,10 @@ class WheelPicker {
 
     if (this.options.type === 'infinite') {
 
+      // list head and tail
       for (let i = 0; i < this.quarterQty; i++) {
 
+        // head
         list = `<li class="wpicker__item"
                   style="
                   height: ${this.itemHeight}px;
@@ -144,6 +145,7 @@ class WheelPicker {
                     <div>
                 </li>` + list;
 
+        // tail
         list += `<li class="wpicker__item"
                   style="
                   height: ${this.itemHeight}px;
@@ -207,6 +209,7 @@ class WheelPicker {
       let startY = touchData.yArr[touchData.yArr.length - 2][0];
       let endY = touchData.yArr[touchData.yArr.length - 1][0];
 
+      // calculation speed
       v = ((startY - endY) / this.itemHeight) * 1000 / (endTime - startTime);
       let sign = v > 0 ? 1 : -1;
 
@@ -235,13 +238,16 @@ class WheelPicker {
 
       this.wheelCallback = setTimeout(() => {
 
-        console.log( 'Scrolling has stopped.' );
-        console.log('callback scroll - ' + this.currentScroll)
         this._selectByScroll(this.currentScroll);
 
       }, 300);
   }
-
+  /**
+   * changes angle of the wheel
+   * whithout animation
+   * @param {number} scroll
+   * @returns {number} scroll after the specified normalize
+   */
   _moveWheel(scroll) {
 
     if (this.type === 'infinite') {
@@ -261,17 +267,29 @@ class WheelPicker {
     return scroll;
   }
 
-  _preventOverscrolling(moveWheelScroll) {
+  /**
+   * Prevent overscrolling
+   * @param {number} scroll
+   * @returns {number} scroll
+   */
+  _preventOverscrolling(scroll) {
 
     if (moveWheelScroll < 0) {
-      moveWheelScroll *= 0.3;
-    } else if (moveWheelScroll > this.source.length) {
-      moveWheelScroll = this.source.length + (moveWheelScroll - this.source.length) * 0.3;
+      scroll *= 0.3;
+    } else if (scroll > this.source.length) {
+      scroll = this.source.length + (scroll - this.source.length) * 0.3;
     }
 
-    return moveWheelScroll
+    return scroll
   }
 
+  /**
+   * keeps the scroll in source.length range,
+   * e.g. source.length = 16, scroll = 17.5
+   * _normalizedScroll(scroll) = 1.5
+   * @param {number} scroll
+   * @returns {number} normalizedScroll after modulus
+  */
   _normalizeScroll(scroll) {
     let normalizedScroll = scroll;
 
@@ -282,9 +300,14 @@ class WheelPicker {
     return normalizedScroll;
   }
 
-  async _animateMoveByInitV(initV) {
 
-    // console.log(initV);
+  /**
+   * Scroll at initial speed ininV
+   * @param {number} initV, initV will be reset
+   * According to the acceleration,
+   * scroll value will be round up to the nearest integer value
+   */
+  async _animateMoveByInitV(initV) {
 
     let initScroll;
     let finalScroll;
@@ -308,11 +331,11 @@ class WheelPicker {
         finalV = 0;
         await this._animateToScroll(initScroll, finalScroll, t);
       } else {
-        initScroll = this.scroll;
-        a = initV > 0 ? -this.a : this.a; // 减速加速度
-        t = Math.abs(initV / a); // 速度减到 0 花费时间
-        totalScrollLen = initV * t + a * t * t / 2; // 总滚动长度
-        finalScroll = Math.round(this.scroll + totalScrollLen); // 取整，确保准确最终 scroll 为整数
+        initScroll = this.currentScroll;
+        a = initV > 0 ? -this.a : this.a; // deceleration
+        t = Math.abs(initV / a); // it takes time to reduce the speed to 0
+        totalScrollLen = initV * t + a * t * t / 2; // total scroll length
+        finalScroll = Math.round(this.currentScroll + totalScrollLen); // round to ensure that the final scroll value is accurate to an integer
         finalScroll = finalScroll < 0 ? 0 : (finalScroll > this.source.length - 1 ? this.source.length - 1 : finalScroll);
 
         totalScrollLen = finalScroll - initScroll;
@@ -321,16 +344,13 @@ class WheelPicker {
       }
 
     } else {
-      initScroll = this.currentScroll;
 
-      a = initV > 0 ? -this.a : this.a; // 减速加速度
-      t = Math.abs(initV / a); // 速度减到 0 花费时间
-      totalScrollLen = initV * t + a * t * t / 2; // 总滚动长度
-      finalScroll = Math.round(this.currentScroll + totalScrollLen); // 取整，确保准确最终 scroll 为整数
+      a = initV > 0 ? -this.a : this.a; // deceleration
+      t = Math.abs(initV / a); // it takes time to reduce the speed to 0
+      totalScrollLen = initV * t + a * t * t / 2; // total scroll length
+      finalScroll = Math.round(this.currentScroll + totalScrollLen); // round to ensure that the final scroll value is accurate to an integer
       await this._animateToScroll(this.currentScroll, finalScroll, t, 'easeOutQuart');
     }
-
-    // await this._animateToScroll(this.scroll, finalScroll, initV, 0);
 
     this._selectByScroll(this.currentScroll);
   }
@@ -345,7 +365,6 @@ class WheelPicker {
     let pass = 0;
     let totalScrollLen = finalScroll - initScroll;
 
-    // console.log(initScroll, finalScroll, initV, finalV, a);
     return new Promise((resolve, reject) => {
       this.moving = true;
       let tick = () => {
@@ -370,7 +389,7 @@ class WheelPicker {
   }
 
   _selectByScroll(scroll) {
-    scroll = this._normalizeScroll(scroll) | 0;
+    scroll = Math.round(this._normalizeScroll(scroll));
     if (scroll > this.source.length - 1) {
       scroll = this.source.length - 1;
       this._moveWheel(scroll);
