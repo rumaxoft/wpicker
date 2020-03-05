@@ -85,10 +85,10 @@ class WheelPicker {
     this.elems.elem.addEventListener('touchend', this.events.touchend);
     document.addEventListener('mouseup', this.events.touchend);
     this.elems.elem.addEventListener('wheel', this.events.wheel);
-    // if (this.source.length) {
-    //   this.value = this.value !== null ? this.value : this.source[0].value;
-    //   this.select(this.value);
-    // }
+    if (this.source.length) {
+      this.value = this.value !== null ? this.value : this.source[0].value;
+      this.select(this.value);
+    }
   }
 
   _create(source) {
@@ -234,7 +234,6 @@ class WheelPicker {
       this.currentScroll = this._moveWheel(moveWheelScroll)
 
       window.clearTimeout(this.wheelCallback);
-      console.log('current scroll - ' + this.currentScroll)
 
       this.wheelCallback = setTimeout(() => {
 
@@ -395,10 +394,25 @@ class WheelPicker {
       this._moveWheel(scroll);
     }
     this._moveWheel(scroll);
-    this.scroll = scroll;
+    this.currentScroll = scroll;
     this.selected = this.source[scroll];
     this.value = this.selected.value;
     // this.onChange && this.onChange(this.selected);
+  }
+
+  select(value) {
+    for (let i = 0; i < this.source.length; i++) {
+      if (this.source[i].value === value) {
+        window.cancelAnimationFrame(this.moveT);
+        let initScroll = this._normalizeScroll(this.currentScroll);
+        let finalScroll = i;
+        let t = Math.sqrt(Math.abs((finalScroll -  initScroll) / this.a));
+        this._animateToScroll(initScroll, finalScroll, t);
+        setTimeout(() => this._selectByScroll(i));
+        return;
+      }
+    }
+    throw new Error(`Can't select value: ${value}, ${value} doesn't exist in source list`);
   }
 }
 
@@ -413,7 +427,7 @@ function getNumbers(from, to) {
   return list
 }
 
-let source = getNumbers(1, 40)
+let source = getNumbers(20, 200)
 let elem = '.wpicker'
 
 let wheelPicker = new WheelPicker({
@@ -425,5 +439,6 @@ let wheelPicker = new WheelPicker({
 
 wheelPicker.init()
 
-console.dir(wheelPicker)
-
+setTimeout(() => {
+  wheelPicker.select(80)
+}, 0);
