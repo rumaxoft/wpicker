@@ -397,7 +397,7 @@ class WheelPicker {
     this.currentScroll = scroll;
     this.selected = this.source[scroll];
     this.value = this.selected.value;
-    // this.onChange && this.onChange(this.selected);
+    this.onChange && this.onChange(this.selected);
   }
 
   select(value) {
@@ -413,6 +413,20 @@ class WheelPicker {
       }
     }
     throw new Error(`Can't select value: ${value}, ${value} doesn't exist in source list`);
+  }
+
+  destroy() {
+    this._stop();
+    // document event remove
+    for (let eventName in this.events) {
+      this.elems.elem.removeEventListener(`${eventName}`, this.events[eventName]);
+    }
+    this.elems.elem.removeEventListener('mousedown', this.events['touchstart']);
+    document.removeEventListener('mousemove', this.events['touchmove']);
+    document.removeEventListener('mouseup', this.events['touchend']);
+    // remove element
+    this.elems.el.innerHTML = '';
+    this.elems = null;
   }
 }
 
