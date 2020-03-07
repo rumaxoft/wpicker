@@ -448,7 +448,10 @@ let wheelPicker = new WheelPicker({
   elem: '.wpicker',
   qty: 21,
   type: 'infinite',
-  source: source
+  source: source,
+  onChange: (selected) => {
+    console.log(selected)
+  }
 })
 
 wheelPicker.init()
