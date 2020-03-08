@@ -211,6 +211,7 @@ class WheelPicker {
 
       // calculation speed
       v = ((startY - endY) / this.itemHeight) * 1000 / (endTime - startTime);
+      console.log(endTime - startTime)
       let sign = v > 0 ? 1 : -1;
 
       v = Math.abs(v) > 30 ? 30 * sign : v;
@@ -387,13 +388,14 @@ class WheelPicker {
     cancelAnimationFrame(this.moveT);
   }
 
-  _selectByScroll(scroll) {
+  async _selectByScroll(scroll) {
+    let initScroll = scroll
     scroll = Math.round(this._normalizeScroll(scroll));
     if (scroll > this.source.length - 1) {
       scroll = this.source.length - 1;
-      this._moveWheel(scroll);
+      await this._animateToScroll(initScroll, scroll, 1, 'easeOutQuart');
     }
-    this._moveWheel(scroll);
+    await this._animateToScroll(initScroll, scroll, 1, 'easeOutQuart');
     this.currentScroll = scroll;
     this.selected = this.source[scroll];
     this.value = this.selected.value;
@@ -450,7 +452,7 @@ let wheelPicker = new WheelPicker({
   type: 'infinite',
   source: source,
   onChange: (selected) => {
-    console.log(selected)
+    // console.log(selected)
   }
 })
 
