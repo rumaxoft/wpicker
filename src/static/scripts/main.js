@@ -209,12 +209,10 @@ class WheelPicker {
       let startY = touchData.yArr[touchData.yArr.length - 2][0];
       let endY = touchData.yArr[touchData.yArr.length - 1][0];
 
-      // calculation speed
+      // calculation speed (itemHeight/second)
       v = ((startY - endY) / this.itemHeight) * 1000 / (endTime - startTime);
-      console.log(endTime - startTime)
       let sign = v > 0 ? 1 : -1;
-
-      v = Math.abs(v) > 30 ? 30 * sign : v;
+      v = Math.abs(v) > 30 ? 30 * sign : v; //max speed
     }
 
     this.currentScroll = touchData.touchScroll
@@ -274,7 +272,7 @@ class WheelPicker {
    */
   _preventOverscrolling(scroll) {
 
-    if (moveWheelScroll < 0) {
+    if (scroll < 0) {
       scroll *= 0.3;
     } else if (scroll > this.source.length) {
       scroll = this.source.length + (scroll - this.source.length) * 0.3;
@@ -327,7 +325,7 @@ class WheelPicker {
 
         t = Math.sqrt(Math.abs(totalScrollLen / a));
         initV = a * t;
-        initV = this.scroll > 0 ? -initV : initV;
+        initV = this.currentScroll > 0 ? -initV : initV;
         finalV = 0;
         await this._animateToScroll(initScroll, finalScroll, t);
       } else {
@@ -390,7 +388,11 @@ class WheelPicker {
 
   async _selectByScroll(scroll) {
     let initScroll = scroll
-    scroll = Math.round(this._normalizeScroll(scroll));
+    if (this.type === 'infinite') {
+
+      scroll = Math.round(this._normalizeScroll(scroll));
+    }
+    scroll = Math.round(scroll)
     if (scroll > this.source.length - 1) {
       scroll = this.source.length - 1;
       await this._animateToScroll(initScroll, scroll, 1, 'easeOutQuart');
