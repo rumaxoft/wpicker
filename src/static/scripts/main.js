@@ -395,9 +395,10 @@ class WheelPicker {
     scroll = Math.round(scroll)
     if (scroll > this.source.length - 1) {
       scroll = this.source.length - 1;
-      await this._animateToScroll(initScroll, scroll, 1, 'easeOutQuart');
+      await this._animateToScroll(initScroll, scroll, 0.3, 'easeOutQuart');
+    } else{
+      await this._animateToScroll(initScroll, scroll, 0.3, 'easeOutQuart');
     }
-    await this._animateToScroll(initScroll, scroll, 1, 'easeOutQuart');
     this.currentScroll = scroll;
     this.selected = this.source[scroll];
     this.value = this.selected.value;
@@ -451,7 +452,7 @@ let elem = '.wpicker'
 let wheelPicker = new WheelPicker({
   elem: '.wpicker',
   qty: 21,
-  type: 'infinite',
+  type: 'normal',
   source: source,
   onChange: (selected) => {
     // console.log(selected)
