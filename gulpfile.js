@@ -22,40 +22,46 @@ const path = require('path');
 const compiler = require('webpack');
 const notify = require('gulp-notify');
 
-
 const NODE_ENV = process.env.NODE_ENV ? 'production' : 'development';
-const isDevelopment = !process.env.NODE_ENV ||
-                       process.env.NODE_ENV == 'development';
+const isDevelopment =
+  !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
 
 gulp.task('html', function() {
   return gulp
       .src(['**/*.pug', '!**/_*.pug'], {cwd: 'src/pages'})
-      .pipe(plumber({
-        errorHandler: notify.onError((err) => ({
-          title: 'HTML',
-          message: err.message,
-        })),
-      }))
+      .pipe(
+          plumber({
+            errorHandler: notify.onError((err) => ({
+              title: 'HTML',
+              message: err.message,
+            })),
+          }),
+      )
       .pipe(pug())
       .pipe(gulp.dest('dest'));
 });
 
 gulp.task('styles', function() {
-  return gulp.src(['*.styl', '!_*.styl'], {cwd: 'src/static/styles'})
-      .pipe(plumber({
-        errorHandler: notify.onError((err) => ({
-          title: 'Styles',
-          message: err.message,
-        })),
-      }))
+  return gulp
+      .src(['*.styl', '!_*.styl'], {cwd: 'src/static/styles'})
+      .pipe(
+          plumber({
+            errorHandler: notify.onError((err) => ({
+              title: 'Styles',
+              message: err.message,
+            })),
+          }),
+      )
       .pipe(gulpIf(isDevelopment, sourcemaps.init()))
-      .pipe(stylus({
-        'define': {
-          url: resolver(),
-        },
-        'include css': true,
-        'include': [path.join(process.cwd(), 'node_modules')],
-      }))
+      .pipe(
+          stylus({
+            'define': {
+              url: resolver(),
+            },
+            'include css': true,
+            'include': [path.join(process.cwd(), 'node_modules')],
+          }),
+      )
       .pipe(postcss())
       .pipe(gulpIf(isDevelopment, sourcemaps.write()))
       .pipe(gulpIf(!isDevelopment, cssnano()))
@@ -67,7 +73,8 @@ gulp.task('clean', function() {
 });
 
 gulp.task('assets', function() {
-  return gulp.src('src/static/assets/**', {since: gulp.lastRun('assets')})
+  return gulp
+      .src('src/static/assets/**', {since: gulp.lastRun('assets')})
       .pipe(debug({title: 'assets'}))
       .pipe(changed('dest/assets'))
       .pipe(gulp.dest('dest/assets'));
@@ -80,13 +87,16 @@ gulp.task('js', function(callback) {
   function done(err, stats) {
     firstBuildReady = true;
 
-    if (err) { // hard error, see https://webpack.github.io/docs/node.js-api.html#error-handling
+    if (err) {
+      // hard error, see https://webpack.github.io/docs/node.js-api.html#error-handling
       return; // emit('error', err) in webpack-stream
     }
 
-    logger[stats.hasErrors() ? 'error' : 'info'](stats.toString({
-      colors: true,
-    }));
+    logger[stats.hasErrors() ? 'error' : 'info'](
+        stats.toString({
+          colors: true,
+        }),
+    );
   }
 
   const options = {
@@ -135,12 +145,14 @@ gulp.task('js', function(callback) {
   return gulp
       .src(['*.js', '!_*.js'], {cwd: 'src/static/scripts'})
       .pipe(debug())
-      .pipe(plumber({
-        errorHandler: notify.onError((err) => ({
-          title: 'Js',
-          message: err.message,
-        })),
-      }))
+      .pipe(
+          plumber({
+            errorHandler: notify.onError((err) => ({
+              title: 'Js',
+              message: err.message,
+            })),
+          }),
+      )
       .pipe(named())
       .pipe(webpackStream(options, compiler, done))
       .pipe(gulpIf(!isDevelopment, uglify()))
@@ -168,13 +180,9 @@ gulp.task('watch', function() {
   gulp.watch('src/static/scripts/**/*.js', gulp.series('js'));
 });
 
-gulp.task('build', gulp.series(
-    'clean',
-    gulp.parallel('styles', 'assets', 'js'),
-    'html',
-),
+gulp.task(
+    'build',
+    gulp.series('clean', gulp.parallel('styles', 'assets', 'js'), 'html'),
 );
 
-gulp.task('dev',
-    gulp.series('build', gulp.parallel('watch', 'serve')),
-);
+gulp.task('dev', gulp.series('build', gulp.parallel('watch', 'serve')));

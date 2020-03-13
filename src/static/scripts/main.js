@@ -1,10 +1,9 @@
-
 const easing = {
   easeOutCubic: function(pos) {
-    return (Math.pow((pos-1), 3) +1);
+    return Math.pow(pos - 1, 3) + 1;
   },
   easeOutQuart: function(pos) {
-    return -(Math.pow((pos-1), 4) -1);
+    return -(Math.pow(pos - 1, 4) - 1);
   },
 };
 /**
@@ -28,7 +27,7 @@ class WheelPicker {
     };
 
     this.options = Object.assign({}, defaults, options);
-    this.options.qty = this.options.qty - this.options.qty % 4;
+    this.options.qty = this.options.qty - (this.options.qty % 4);
     Object.assign(this, this.options);
 
     this.halfQty = this.qty / 2;
@@ -57,12 +56,14 @@ class WheelPicker {
     this.wheelMultiplicator = this.isFirefox ? 5 : 0.7;
     // calculating height from circumference
     // eslint-disable-next-line max-len
-    this.itemHeight = Math.floor(this.elems.elem.clientHeight * Math.PI / this.options.qty);
+    this.itemHeight = Math.floor(
+        (this.elems.elem.clientHeight * Math.PI) / this.options.qty,
+    );
     // degree of rotation between each item
     this.itemAngle = 360 / this.options.qty;
     // wheel radius
-    this.radius = this.itemHeight / Math.tan(this.itemAngle * Math.PI / 180);
-    this. currentScroll = 0; // unit is itemHeight
+    this.radius = this.itemHeight / Math.tan((this.itemAngle * Math.PI) / 180);
+    this.currentScroll = 0; // unit is itemHeight
     this.wheelCallback = null; // "wheel" event hasn't "wheel end" event
   }
 
@@ -148,7 +149,8 @@ class WheelPicker {
       // list head and tail
       for (let i = 0; i < this.quarterQty; i++) {
         // head
-        list = `<li class="wpicker__item"
+        list =
+          `<li class="wpicker__item"
                   style="
                   height: ${this.itemHeight}px;
                   transform: rotateX(${this.itemAngle * (i + 1)}deg)
@@ -235,7 +237,7 @@ class WheelPicker {
       const endY = touchData.yArr[touchData.yArr.length - 1][0];
 
       // calculation speed (itemHeight/second)
-      v = ((startY - endY) / this.itemHeight) * 1000 / (endTime - startTime);
+      v = (((startY - endY) / this.itemHeight) * 1000) / (endTime - startTime);
       const sign = v > 0 ? 1 : -1;
       v = Math.abs(v) > 30 ? 30 * sign : v; // max speed
     }
@@ -249,7 +251,7 @@ class WheelPicker {
    * @param {Object} e event object
    */
   _wheel(e) {
-    const scrollAdd = e.deltaY/this.itemHeight*this.wheelMultiplicator;
+    const scrollAdd = (e.deltaY / this.itemHeight) * this.wheelMultiplicator;
     let moveToScroll = this.currentScroll + scrollAdd;
 
     if (this.type === 'normal') {
@@ -312,7 +314,7 @@ class WheelPicker {
    * _normalizedScroll(scroll) = 1.5
    * @param {number} scroll
    * @return {number} normalizedScroll after modulus
-  */
+   */
   _normalizeScroll(scroll) {
     let normalizedScroll = scroll;
 
@@ -322,7 +324,6 @@ class WheelPicker {
     normalizedScroll = normalizedScroll % this.source.length;
     return normalizedScroll;
   }
-
 
   /**
    * Scroll at initial speed ininV
@@ -339,38 +340,51 @@ class WheelPicker {
     let t;
 
     if (this.type === 'normal') {
-      if (this.currentScroll < 0 ||
-          this.currentScroll > this.source.length - 1) {
+      if (
+        this.currentScroll < 0 ||
+        this.currentScroll > this.source.length - 1
+      ) {
         a = this.exceedA;
         initScroll = this.currentScroll;
         finalScroll = this.currentScroll < 0 ? 0 : this.source.length - 1;
         totalScrollLen = initScroll - finalScroll;
-        t = Math.sqrt(Math.abs(2*totalScrollLen / a));
+        t = Math.sqrt(Math.abs((2 * totalScrollLen) / a));
         await this._animateToScroll(initScroll, finalScroll, t);
       } else {
         initScroll = this.currentScroll;
         a = initV > 0 ? -this.a : this.a; // deceleration
         t = Math.abs(initV / a); // it takes time to reduce the speed to 0
-        totalScrollLen = initV * t + a * t * t / 2; // total scroll length
+        totalScrollLen = initV * t + (a * t * t) / 2; // total scroll length
         // round to ensure that the final scroll value is accurate to an integer
         finalScroll = Math.round(this.currentScroll + totalScrollLen);
-        finalScroll = finalScroll < 0 ?
-          0 : (
-                finalScroll > this.source.length - 1 ?
-                  this.source.length - 1 : finalScroll
-              );
+        finalScroll =
+          finalScroll < 0 ?
+            0 :
+            finalScroll > this.source.length - 1 ?
+            this.source.length - 1 :
+            finalScroll;
         totalScrollLen = finalScroll - initScroll;
         // eslint-disable-next-line max-len
-        await this._animateToScroll(this.currentScroll, finalScroll, t, 'easeOutQuart');
+        await this._animateToScroll(
+            this.currentScroll,
+            finalScroll,
+            t,
+            'easeOutQuart',
+        );
       }
     } else {
       a = initV > 0 ? -this.a : this.a; // deceleration
       t = Math.abs(initV / a); // it takes time to reduce the speed to 0
-      totalScrollLen = initV * t + a * t * t / 2; // total scroll length
+      totalScrollLen = initV * t + (a * t * t) / 2; // total scroll length
       // round to ensure that the final scroll value is accurate to an integer
       finalScroll = Math.round(this.currentScroll + totalScrollLen);
       // eslint-disable-next-line max-len
-      await this._animateToScroll(this.currentScroll, finalScroll, t, 'easeOutQuart');
+      await this._animateToScroll(
+          this.currentScroll,
+          finalScroll,
+          t,
+          'easeOutQuart',
+      );
     }
 
     this._selectByScroll(this.currentScroll);
@@ -401,7 +415,7 @@ class WheelPicker {
 
         if (pass < t) {
           const delta = easing[easingName](pass / t) * totalScrollLen;
-          this.currentScroll = this._moveWheel(initScroll + delta );
+          this.currentScroll = this._moveWheel(initScroll + delta);
           this.moveT = requestAnimationFrame(tick);
         } else {
           resolve();
@@ -472,7 +486,10 @@ class WheelPicker {
     for (const eventName in this.events) {
       if ({}.hasOwnProperty.call(this.events, eventName)) {
         // eslint-disable-next-line max-len
-        this.elems.elem.removeEventListener(`${eventName}`, this.events[eventName]);
+        this.elems.elem.removeEventListener(
+            `${eventName}`,
+            this.events[eventName],
+        );
       }
     }
     this.elems.elem.removeEventListener('mousedown', this.events['touchstart']);
@@ -483,7 +500,6 @@ class WheelPicker {
     this.elems = null;
   }
 }
-
 
 // Implementation
 
@@ -508,8 +524,7 @@ const wheelPicker = new WheelPicker({
   qty: 21,
   type: 'normal',
   source: source,
-  onChange: (selected) => {
-  },
+  onChange: (selected) => {},
 });
 
 wheelPicker.init();
