@@ -1,3 +1,5 @@
+// This is fork of https://codepen.io/gnauhca/pen/JrdpZZ. Copyright (c) 2020 by Chaz
+
 const easing = {
   easeOutCubic: function(pos) {
     return Math.pow(pos - 1, 3) + 1;
