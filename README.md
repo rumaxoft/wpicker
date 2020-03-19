@@ -1,7 +1,7 @@
-# Wheel Picker
+# Wpicker
 
 
-Wheel Picker is a light-weight, dependency free IOs-like ui-picker.
+Wpicker is a light-weight, dependency free IOs-like ui-picker.
 Demos and full documentation available on Github Pages: https://rumaxoft.github.io/wheel-picker/
 
 ### Quick start
@@ -46,7 +46,7 @@ new WheelPicker({
 });
 ```
 
-Wheel Picker full options with default values:
+Wpicker full options with default values:
 
 ```javascript
 new WheelPicker({
@@ -79,7 +79,7 @@ wheelPicker.destroy();
 
 ### Browser support
 
-Wheel Picker should run on all modern browsers.
+Wpicker should run on all modern browsers.
 
 ### Dependencies
 
@@ -89,7 +89,7 @@ None :)
 
 Want to contribute? Great!
 
-Wheel Picker uses Gulp + Webpack for fast developing.
+Wpicker uses Gulp + Webpack for fast developing.
 
 1.  Install the [node.js](https://nodejs.org)
 2.  Clone the project or [download](https://github.com/rumaxoft/wheeel-picker/archive/master.zip) the file
