@@ -1,0 +1,89 @@
+$sideSize = 40px
+$time = 20s
+$radius = ($sideSize / (2 * tan((180 / 20deg))))
+$elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12), 0px 0px 2px rgba(0, 0, 0, 0.14)
+
+.page
+	display flex
+	flex-direction column
+	align-items center
+	margin 0
+	padding 0
+	width 100vw
+	height 100vh
+	font-family Roboto
+
+.title
+	margin-top 100px
+	margin-bottom 100px
+
+.wpicker
+	position absolute
+	top 50%
+	left 50%
+	display flex
+	justify-content center
+	align-items center
+	overflow hidden
+	margin 0
+	padding 0
+	width 300px
+	height 300px
+	border-radius 8px
+	box-shadow $elevation-1dp
+	font-size 24px
+	transform translateY(-50%) translateX(-50%)
+	perspective-origin 50% 50%
+	perspective 1000px
+
+	&:before
+	&:after
+		position absolute
+		z-index 1
+		display block
+		width 100%
+		height 50%
+		content ''
+
+	&:before
+		top 0
+		background-image linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0))
+
+	&:after
+		bottom 0
+		background-image linear-gradient(to top, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0))
+
+	&__viewport
+		position absolute
+		top 50%
+		left 50%
+		width 50%
+		border-top 2px solid rgba(1, 1, 1, 0.3)
+		border-bottom 2px solid rgba(1, 1, 1, 0.3)
+		transform translateY(-50%) translateX(-50%)
+
+	&__list
+		position relative
+		display block
+		margin 0
+		padding 0
+		width 100%
+		list-style none
+		animation-name rotate
+		animation-duration $time
+		animation-timing-function linear
+		animation-iteration-count infinite
+		will-change transform
+		transform-style preserve-3d
+
+	&__item
+		position absolute
+		display flex
+		justify-content center
+		align-items center
+		margin 0
+		padding 0
+		width 100%
+		color grey
+		font-weight 600
+		backface-visibility hidden

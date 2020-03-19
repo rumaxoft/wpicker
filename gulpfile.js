@@ -71,12 +71,41 @@ gulp.task('styles', function() {
       .pipe(gulp.dest(`${serveDir}/assets/stylesheets`));
 });
 
+gulp.task('wpicker:styles', function() {
+  return gulp
+      .src(['*.styl', '!_*.styl'], {cwd: `src/wpicker`})
+      .pipe(
+          plumber({
+            errorHandler: notify.onError((err) => ({
+              title: 'Styles',
+              message: err.message,
+            })),
+          }),
+      )
+      .pipe(
+          stylus({
+            'define': {
+              url: resolver(),
+            },
+            'include css': true,
+            'include': [path.join(process.cwd(), 'node_modules')],
+          }),
+      )
+      .pipe(postcss())
+      .pipe(cssnano())
+      .pipe(gulp.dest(`wpicker`));
+});
+
 gulp.task('clean', function() {
   if (isSite) {
-    return del(['site']);
+    return del('site');
   } else {
-    return del(['example', 'wpicker']);
+    return del('example');
   }
+});
+
+gulp.task('wpicker:clean', function() {
+  return del('wpicker');
 });
 
 gulp.task('assets', function() {
@@ -172,7 +201,7 @@ gulp.task('js', function(callback) {
       });
 });
 
-gulp.task('wpicker:build', function(callback) {
+gulp.task('wpicker:js', function(callback) {
   let firstBuildReady = false;
 
   // eslint-disable-next-line require-jsdoc
