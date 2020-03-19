@@ -9,11 +9,11 @@ const easing = {
   },
 };
 /**
- * WheelPicker Class
+ * Wpicker Class
  */
-class WheelPicker {
+class Wpicker {
   /**
-   * Create a WheelPicker
+   * Create a Wpicker
    * @param {Object} options
    */
   constructor(options) {
@@ -521,7 +521,7 @@ function getNumbers(from, to) {
 
 const source = getNumbers(20, 200);
 
-const wheelPicker = new WheelPicker({
+const wpicker = new Wpicker({
   elem: '.wpicker',
   qty: 21,
   type: 'normal',
@@ -529,8 +529,8 @@ const wheelPicker = new WheelPicker({
   onChange: (selected) => {},
 });
 
-wheelPicker.init();
+wpicker.init();
 
 setTimeout(() => {
-  wheelPicker.select(80);
+  wpicker.select(80);
 }, 0);
