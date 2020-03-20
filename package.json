@@ -7,7 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prettify": "prettier --write \"**/*.{js,json,jsx,ts,css,less,scss,md,markdown}\"",
     "stylus": "stylus-supremacy format ./src/**/*.styl --replace --options ./stylus-supremacy.config.json"
-
   },
   "keywords": [
     "wheel",
@@ -34,6 +33,7 @@
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^8.0.0",
     "gulp-pug": "^4.0.1",
+    "gulp-rename": "^2.0.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-stylus": "^2.7.0",
     "gulp-uglify": "^3.0.2",

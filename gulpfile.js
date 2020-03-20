@@ -22,6 +22,7 @@ const path = require('path');
 const compiler = require('webpack');
 const notify = require('gulp-notify');
 const argv = require('yargs').argv;
+const rename = require('gulp-rename');
 
 const NODE_ENV = process.env.NODE_ENV ? 'production' : 'development';
 const isDevelopment =
@@ -67,6 +68,7 @@ gulp.task('styles', function() {
       )
       .pipe(postcss())
       .pipe(gulpIf(isDevelopment, sourcemaps.write()))
+      .pipe(gulpIf(!isDevelopment, rename({suffix: '.min'})))
       .pipe(gulpIf(!isDevelopment, cssnano()))
       .pipe(gulp.dest(`${serveDir}/assets/stylesheets`));
 });
@@ -92,7 +94,9 @@ gulp.task('wpicker:styles', function() {
           }),
       )
       .pipe(postcss())
+      .pipe(gulp.dest(`wpicker`))
       .pipe(cssnano())
+      .pipe(rename({suffix: '.min'}))
       .pipe(gulp.dest(`wpicker`));
 });
 
