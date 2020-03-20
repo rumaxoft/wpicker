@@ -2,34 +2,36 @@
 
 
 Wpicker is a light-weight, dependency free IOs-like ui-picker.
-Demos and full documentation available on Github Pages: https://rumaxoft.github.io/wheel-picker/
+Demos and full documentation available on Github Pages: https://rumaxoft.github.io/wpicker/
 
 ### Quick start
 
-Include wheel-picker.min.css:
+Include wpicker.min.css:
 
 ```html
-<link rel="stylesheet" href="wheel-picker.min.css">
+<link rel="stylesheet" href="wpicker.min.css">
 or
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/wheel-picker@1/wheeel-picker.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/wpicker@1/wpicker.min.css">
 ```
 
-Include wheel-picker.min.js:
+Include wpicker.min.js:
 
 ```html
-<script src="wheel-picker.min.js"></script>
+<script src="wpicker.min.js"></script>
 or
-<script src="https://cdn.jsdelivr.net/npm/wheel-picker@1/wheel-picker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wpicker@1/wpicker.min.js"></script>
 ```
 
 Example HTML:
 
 ```html
-<div id="wheel-picker">
+<div class="wpicker-container">
+  <div id="wpicker">
+  </div>
 </div>
 ```
 
-Wheel-picker Initialization
+wpicker Initialization
 
 ```javascript
 const source = [
@@ -40,7 +42,7 @@ const source = [
     {value: 5, text: '5'}
 ]
 new WheelPicker({
-  elem: '#wheel-picker',
+  elem: '#wpicker',
   source: source,
   onChange: (selected) => {}
 });
@@ -70,7 +72,7 @@ Destroy with:
 
 ```javascript
 const wheelPicker = new WheelPicker({
-  elem: '#wheel-picker',
+  elem: '#wpicker',
   source: source,
   onChange: (selected) => {}
 });
@@ -92,19 +94,32 @@ Want to contribute? Great!
 Wpicker uses Gulp + Webpack for fast developing.
 
 1.  Install the [node.js](https://nodejs.org)
-2.  Clone the project or [download](https://github.com/rumaxoft/wheeel-picker/archive/master.zip) the file
+2.  Clone the project or [download](https://github.com/rumaxoft/wpicker/archive/master.zip) the file
     ```sh
-    git clone git@github.com:rumaxoft/wheel-picker.git --depth 1 my-project
+    git clone git@github.com:rumaxoft/wpicker.git --depth 1 my-project
     ```
 3.  Go to project folder and run
     ```bash
     npm run setup
     ```
-4.  Start dev server
+4.  Start dev server with exaple
     ```bash
-    gulp dev
+    npm run dev
     ```
 5.  In browser open page with address [`http://localhost:3000/`](http://localhost:3000/)
+
+6. Build wpicker in wpicker directory
+  ```bash
+    npm run build
+    ```
+7. Start dev server with site
+  ```bash
+    npm run site
+    ```
+8. Build site
+  ```bash
+    npm run site:build
+    ```
 
 ### License
 
