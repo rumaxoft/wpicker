@@ -280,8 +280,10 @@ gulp.task('wpicker:js', function(callback) {
       )
       .pipe(named())
       .pipe(webpackStream(options, compiler, done))
-      .pipe(gulpIf(!isDevelopment, uglify()))
       .pipe(debug())
+      .pipe(gulp.dest('wpicker'))
+      .pipe(uglify())
+      .pipe(rename({suffix: '.min'}))
       .pipe(gulp.dest('wpicker'))
       .on('data', function() {
         if (firstBuildReady) {
