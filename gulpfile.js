@@ -24,6 +24,7 @@ const argv = require('yargs').argv;
 const rename = require('gulp-rename');
 
 const webpackConfig = require('./webpack.config').options;
+const webpackWpickerConfig = require('./webpack-wpicker.config').options;
 
 const NODE_ENV = process.env.NODE_ENV ? 'production' : 'development';
 const isDevelopment = NODE_ENV === 'development';
@@ -95,7 +96,6 @@ gulp.task('wpicker:styles', function() {
           }),
       )
       .pipe(postcss())
-      .pipe(gulp.dest('wpicker'))
       .pipe(cssnano())
       .pipe(rename({suffix: '.min'}))
       .pipe(gulp.dest('wpicker'));
@@ -164,6 +164,24 @@ gulp.task('js', function(callback) {
 });
 
 gulp.task('wpicker:js', function(callback) {
+  let firstBuildReady = false;
+
+  // eslint-disable-next-line require-jsdoc
+  function done(err, stats) {
+    firstBuildReady = true;
+
+    if (err) {
+      // hard error, see https://webpack.github.io/docs/node.js-api.html#error-handling
+      return; // emit('error', err) in webpack-stream
+    }
+
+    logger[stats.hasErrors() ? 'error' : 'info'](
+        stats.toString({
+          colors: true,
+        }),
+    );
+  }
+
   return gulp
       .src(['*.js'], {cwd: 'src/wpicker'})
       .pipe(debug())
@@ -175,10 +193,16 @@ gulp.task('wpicker:js', function(callback) {
             })),
           }),
       )
-      .pipe(gulp.dest('wpicker'))
-      .pipe(uglify())
+      .pipe(named())
+      .pipe(webpackStream(webpackWpickerConfig, compiler, done))
+      .pipe(gulpIf(!isDevelopment, uglify()))
       .pipe(rename({suffix: '.min'}))
-      .pipe(gulp.dest('wpicker'));
+      .pipe(gulp.dest('wpicker'))
+      .on('data', function() {
+        if (firstBuildReady) {
+          callback();
+        }
+      });
 });
 
 gulp.task('serve', function() {
