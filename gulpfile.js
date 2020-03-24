@@ -175,9 +175,6 @@ gulp.task('wpicker:js', function(callback) {
             })),
           }),
       )
-      .pipe(named())
-      .pipe(webpackStream(webpackConfig, compiler))
-      .pipe(debug())
       .pipe(gulp.dest('wpicker'))
       .pipe(uglify())
       .pipe(rename({suffix: '.min'}))
