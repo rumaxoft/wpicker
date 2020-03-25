@@ -29,8 +29,8 @@ const webpackWpickerConfig = require('./webpack-wpicker.config').options;
 const NODE_ENV = process.env.NODE_ENV ? 'production' : 'development';
 const isDevelopment = NODE_ENV === 'development';
 
-const serveDir = argv.site? 'site' : 'example';
-const isSite = argv.site? true : false;
+const serveDir = argv.site ? 'docs' : 'example';
+const isSite = argv.site ? true : false;
 
 gulp.task('html', function() {
   return gulp
@@ -211,8 +211,7 @@ gulp.task('serve', function() {
     open: false,
   });
 
-  browserSync.watch([`${serveDir}/**/*.*`])
-      .on('change', browserSync.reload);
+  browserSync.watch([`${serveDir}/**/*.*`]).on('change', browserSync.reload);
 });
 
 gulp.task('watch', function() {
@@ -233,5 +232,3 @@ gulp.task(
     'wpicker',
     gulp.series('wpicker:clean', gulp.parallel('wpicker:styles', 'wpicker:js')),
 );
-
-
