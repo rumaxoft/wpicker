@@ -1,0 +1,31 @@
+@import "../../../wpicker/wpicker.styl"
+
+$elevation-1dp = 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12), 0px 0px 2px rgba(0, 0, 0, 0.14)
+
+.page
+  posititon relative
+  margin 0
+  padding 0
+  width 100vw
+  height 100vh
+  font-family Roboto
+
+.title
+  margin-top 100px
+  text-align center
+
+.wpicker-container
+  transform translateY(-50%) translateX(-50%)
+  position absolute
+  top 50%
+  left 50%
+  overflow hidden
+  margin 0
+  padding 0
+  width 300px
+  height 300px
+  border-radius 8px
+  box-shadow $elevation-1dp
+  font-size 24px
+  color grey
+  font-weight 600
