@@ -14,7 +14,7 @@ insert_final_newline = true
 
 [*.{jade,pug,styl,stylus}]
 indent_style = tab
-indent_size = 4
+indent_size = 2
 
 [*.{jade,pug}]
 trim_trailing_whitespace = false
