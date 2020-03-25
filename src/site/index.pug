@@ -1,0 +1,46 @@
+doctype html
+html(lang= "en")
+	head
+	//
+		| *
+		| __          _ _____ _      _
+		| \ \        / |  __ (_)    | |
+		|  \ \  /\  / /| |__) |  ___| | _____ _ __
+		|   \ \/  \/ / |  ___/ |/ __| |/ / _ \ '__|
+		|    \  /\  /  | |   | | (__|   <  __/ |
+		|     \/  \/   |_|   |_|\___|_|\_\___|_|
+
+
+
+	meta(charset="utf-8")
+	meta(content="IE=edge" http-equiv="X-UA-Compatible")
+	meta(name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+	title Wpicker
+	link(rel="stylesheet" href= "assets/stylesheets/main.css")
+
+	body.page
+		header.page__header.header
+			.header__logo
+				img.header__logo-image(src="assets/images/logo.svg")
+			h1.header__title Wpicker.js
+			p.header__text Wpicker is a light-weight, fast, dependency free, mobile-friendly IOs-like ui-picker.
+			.header__buttons-wrapper
+				a.header__button.header__button--github(href="https://github.com/rumaxoft/wpicker")
+					span.header__button-text.header__button-text--desktop View
+					span.header__button-text &nbsp Github
+					img.header__button-image(src="assets/images/octopus.svg" alt="Github")
+				a.header__button.header__button--download(href="#")
+					span.header__button-text Download
+					span.header__button-text.header__button-text--desktop &nbsp now
+					img.header__button-image(src="assets/images/download.svg" alt="Download")
+		main.page__main.main
+			section.main__demos.demos
+				h2.demos__title Demos
+				p Normal
+				.wpicker-container
+					.wpicker#wpicker-normal
+				p infinite
+				.wpicker-container
+					.wpicker#wpicker-infinite
+
+		script(src= "assets/javascripts/main.js")
